@@ -6,11 +6,7 @@ interface GenerateParams {
   userText: string;
 }
 
-/**
- * Ponto único de entrada: recebe o motor escolhido e devolve o código
- * do diagrama gerado como texto puro. Trocar de motor é só adicionar
- * um novo "case" aqui — o resto da aplicação não muda.
- */
+
 export async function callLLM({ provider, systemPrompt, userText }: GenerateParams): Promise<string> {
   switch (provider) {
     case "groq":
@@ -22,19 +18,13 @@ export async function callLLM({ provider, systemPrompt, userText }: GeneratePara
   }
 }
 
-/**
- * Groq: tier gratuito sem cartão de crédito, modelos abertos (Llama, Qwen, etc.).
- * A API é compatível com o formato de chat da OpenAI.
- * Lista de modelos disponíveis: https://console.groq.com/docs/models
- */
+
 async function callGroq(systemPrompt: string, userText: string): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new Error("GROQ_API_KEY não configurada. Adicione no arquivo .env.local");
   }
 
-  // O Llama 3.3 70B foi descontinuado para os planos gratuito e Developer
-  // em 16/08/2026. A variável permite trocar o modelo sem alterar o código.
   const model = process.env.GROQ_MODEL?.trim() || "openai/gpt-oss-120b";
 
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -63,11 +53,7 @@ async function callGroq(systemPrompt: string, userText: string): Promise<string>
   return stripCodeFence(text);
 }
 
-/**
- * Google Gemini via AI Studio: tier gratuito sem cartão de crédito,
- * mas limitado aos modelos da linha "Flash" (a linha "Pro" é paga).
- * Modelos disponíveis: https://ai.google.dev/gemini-api/docs/models
- */
+
 async function callGemini(systemPrompt: string, userText: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -98,7 +84,7 @@ async function callGemini(systemPrompt: string, userText: string): Promise<strin
   return stripCodeFence(text);
 }
 
-/** Remove blocos ```mermaid ... ``` caso o modelo ignore a instrução e envolva o código mesmo assim. */
+
 function stripCodeFence(text: string): string {
   return text
     .trim()
