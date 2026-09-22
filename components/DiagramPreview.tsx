@@ -65,8 +65,6 @@ export default function DiagramPreview({ code, loading, error }: Props) {
           startOnLoad: false,
           theme: "base",
           securityLevel: "strict",
-          // O DOMPurify remove o conteúdo dos foreignObjects usados nos
-          // rótulos HTML. Texto SVG nativo preserva nomes e propriedades.
           flowchart: { htmlLabels: false },
           themeVariables: {
             darkMode: true,
